@@ -175,8 +175,9 @@ function set(key, value, array = newArr) {
   }
   // If that bucket is already empty - create a Linked list and add the key/value pair
   else if (!array[hashedKey]) {
-    array[hashedKey] = new LinkedList();
-    array[hashedKey].append(key, value);
+    const linkedList = new LinkedList();
+    linkedList.append(key, value);
+    array[hashedKey] = linkedList;
   } else {
     // If the bucket has something in it - search the array for that key
     // If key is there - rewrite the value
@@ -187,7 +188,6 @@ function set(key, value, array = newArr) {
     }
     // If key isn't there then write it
     else {
-      array[hashedKey] = new LinkedList();
       array[hashedKey].append(key, value);
     }
   }
@@ -198,4 +198,4 @@ set("test", "testValue");
 set("test", "newValue");
 set("words", "hmm");
 set("carla", "carla");
-console.log(newArr);
+console.log(newArr["9"]);
