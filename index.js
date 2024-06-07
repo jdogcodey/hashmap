@@ -193,9 +193,20 @@ function set(key, value, array = newArr) {
   }
 }
 
+function get(key, array = newArr) {
+  const hashedKey = hash(key);
+  if (array[hashedKey].containsKey(key)) {
+    const keyDirections = array[hashedKey].findKey(key);
+    const keyLocation = array[hashedKey].at(keyDirections);
+    return keyLocation.value;
+  }
+  return null;
+}
+
 let newArr = hashMap();
 set("test", "testValue");
 set("test", "newValue");
 set("words", "hmm");
 set("carla", "carla");
 console.log(newArr["9"]);
+console.log(get("carla"));
