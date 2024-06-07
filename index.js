@@ -193,20 +193,22 @@ function set(key, value, array = newArr) {
   }
 }
 
+// Find the value pair of a key
 function get(key, array = newArr) {
   const hashedKey = hash(key);
-  if (array[hashedKey].containsKey(key)) {
+  if (!array[hashedKey] || !array[hashedKey].containsKey(key)) {
+    return null;
+  } else {
     const keyDirections = array[hashedKey].findKey(key);
     const keyLocation = array[hashedKey].at(keyDirections);
     return keyLocation.value;
   }
-  return null;
 }
 
 let newArr = hashMap();
 set("test", "testValue");
 set("test", "newValue");
 set("words", "hmm");
-set("carla", "carla");
+// set("carla", "carla");
 console.log(newArr["9"]);
 console.log(get("carla"));
