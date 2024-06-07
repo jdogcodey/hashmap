@@ -134,6 +134,21 @@ class LinkedList {
     output = `${output} -> null`;
     return output;
   }
+
+  removeAt(index) {
+    if (this.at(index) === null) {
+      return false;
+    } else if (this.at(index).nextNode === null) {
+      this.pop();
+      return true;
+    } else if (index === 0) {
+      this.head = this.at(index + 1);
+    } else {
+      const currentNextNode = this.at(index).nextNode;
+      this.at(index - 1).nextNode = currentNextNode;
+      return true;
+    }
+  }
 }
 
 // Also copied from the last lesson
@@ -196,7 +211,7 @@ function set(key, value, array = newArr) {
 // Find the value pair of a key
 function get(key, array = newArr) {
   const hashedKey = hash(key);
-  // If the bucket is empty or the key doesn't exist
+  // If the key exists then find its value - otherwise return null
   if (has(key)) {
     const keyDirections = array[hashedKey].findKey(key);
     const keyLocation = array[hashedKey].at(keyDirections);
@@ -216,6 +231,9 @@ function has(key, array = newArr) {
 function remove(key, array = newArr) {
   const hashedKey = hash(key);
   if (has(key)) {
+    const keyPosition = array[hashedKey].findKey(key);
+    array[hashedKey].removeAt(keyPosition);
+    return true;
   } else return false;
 }
 
@@ -226,9 +244,11 @@ set("words", "hmm");
 set("carla", "carla");
 console.log(newArr["9"]);
 console.log(get("carla"));
+console.log(get("words"));
 console.log(get("test"));
 console.log(get("nope"));
 console.log(remove("test"));
 console.log(remove("words"));
-console.log(remove("carla"));
+// console.log(remove("carla"));
 console.log(remove("nope"));
+console.log(newArr);
