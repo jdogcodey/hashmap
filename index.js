@@ -4,23 +4,23 @@ class LinkedList {
   constructor(head = null) {
     this.head = head;
   }
-  append(value) {
+  append(key, value) {
     if (!this.head) {
-      this.head = new Node(value);
+      this.head = new Node(key, value);
       return this;
     } else {
-      this.getTail().nextNode = new Node(value);
+      this.getTail().nextNode = new Node(key, value);
       return this;
     }
   }
 
-  prepend(value) {
+  prepend(key, value) {
     if (!this.head) {
-      this.head = new Node(value);
+      this.head = new Node(key, value);
       return this;
     } else {
       const currentHead = this.head;
-      this.head = new Node(value, currentHead);
+      this.head = new Node(key, value, currentHead);
       return this;
     }
   }
@@ -71,7 +71,7 @@ class LinkedList {
     currentNode.nextNode = null;
   }
 
-  contains(value) {
+  containsVal(value) {
     let currentNode = this.head;
     while (currentNode !== null) {
       if (value === currentNode.value) {
@@ -82,11 +82,36 @@ class LinkedList {
     return false;
   }
 
-  find(value) {
+  containsKey(key) {
+    let currentNode = this.head;
+    while (currentNode !== null) {
+      if (key === currentNode.key) {
+        return true;
+      }
+      currentNode = currentNode.nextNode;
+    }
+    return false;
+  }
+
+  findVal(value) {
     let currentNode = this.head;
     let nodeCount = 0;
     while (currentNode !== null) {
       if (value === currentNode.value) {
+        return nodeCount;
+      } else {
+        nodeCount++;
+        currentNode = currentNode.nextNode;
+      }
+    }
+    return null;
+  }
+
+  findKey(key) {
+    let currentNode = this.head;
+    let nodeCount = 0;
+    while (currentNode !== null) {
+      if (key === currentNode.key) {
         return nodeCount;
       } else {
         nodeCount++;
@@ -114,7 +139,8 @@ class LinkedList {
 // Also copied from the last lesson
 // Class to make Nodes
 class Node {
-  constructor(value = null, nextNode = null) {
+  constructor(key = null, value = null, nextNode = null) {
+    this.key = key;
     this.value = value;
     this.nextNode = nextNode;
   }
@@ -126,14 +152,12 @@ function hashMap() {
     array: [],
     bucketSize: 16,
     loadFactor: 0.75,
-
-    set(key, value) {},
   };
 }
 
-function hash(key, array) {
+// Function to create a hash from a value
+function hash(key, array = newArr) {
   let hashCode = 0;
-
   const primeNumber = 31;
   for (let i = 0; i < key.length; i++) {
     hashCode = primeNumber * hashCode + key.charCodeAt(i);
@@ -142,5 +166,36 @@ function hash(key, array) {
   return hashCode;
 }
 
+//Function to assign a value to a key and add to the hashmap
+function set(key, value, array = newArr) {
+  const hashedKey = hash(key);
+  // If trying to add to bucket outside the range then throwing an error
+  if (hashedKey < 0 || hashedKey >= newArr.bucketSize) {
+    throw new Error("Trying to access index out of bound");
+  }
+  // If that bucket is already empty - create a Linked list and add the key/value pair
+  else if (!array[hashedKey]) {
+    array[hashedKey] = new LinkedList();
+    array[hashedKey].append(key, value);
+  } else {
+    // If the bucket has something in it - search the array for that key
+    // If key is there - rewrite the value
+    if (array[hashedKey].containsKey(key)) {
+      const keyDirections = array[hashedKey].findKey(key);
+      const keyLocation = array[hashedKey].at(keyDirections);
+      keyLocation.value = value;
+    }
+    // If key isn't there then write it
+    else {
+      array[hashedKey] = new LinkedList();
+      array[hashedKey].append(key, value);
+    }
+  }
+}
+
 let newArr = hashMap();
-console.log();
+set("test", "testValue");
+set("test", "newValue");
+set("words", "hmm");
+set("carla", "carla");
+console.log(newArr);
