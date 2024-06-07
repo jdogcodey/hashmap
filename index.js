@@ -196,6 +196,7 @@ function set(key, value, array = newArr) {
 // Find the value pair of a key
 function get(key, array = newArr) {
   const hashedKey = hash(key);
+  // If the bucket is empty or the key doesn't exist
   if (!array[hashedKey] || !array[hashedKey].containsKey(key)) {
     return null;
   } else {
@@ -205,10 +206,23 @@ function get(key, array = newArr) {
   }
 }
 
+function has(key, array = newArr) {
+  const hashedKey = hash(key);
+  if (array[hashedKey]) {
+    if (array[hashedKey].containsKey(key)) {
+      return true;
+    } else return false;
+  } else return false;
+}
+
 let newArr = hashMap();
 set("test", "testValue");
 set("test", "newValue");
 set("words", "hmm");
-// set("carla", "carla");
+set("carla", "carla");
 console.log(newArr["9"]);
 console.log(get("carla"));
+console.log(has("test"));
+console.log(has("words"));
+console.log(has("carla"));
+console.log(has("nope"));
