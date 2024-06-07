@@ -197,13 +197,11 @@ function set(key, value, array = newArr) {
 function get(key, array = newArr) {
   const hashedKey = hash(key);
   // If the bucket is empty or the key doesn't exist
-  if (!array[hashedKey] || !array[hashedKey].containsKey(key)) {
-    return null;
-  } else {
+  if (has(key)) {
     const keyDirections = array[hashedKey].findKey(key);
     const keyLocation = array[hashedKey].at(keyDirections);
     return keyLocation.value;
-  }
+  } else return null;
 }
 
 function has(key, array = newArr) {
@@ -215,6 +213,12 @@ function has(key, array = newArr) {
   } else return false;
 }
 
+function remove(key, array = newArr) {
+  const hashedKey = hash(key);
+  if (has(key)) {
+  } else return false;
+}
+
 let newArr = hashMap();
 set("test", "testValue");
 set("test", "newValue");
@@ -222,7 +226,9 @@ set("words", "hmm");
 set("carla", "carla");
 console.log(newArr["9"]);
 console.log(get("carla"));
-console.log(has("test"));
-console.log(has("words"));
-console.log(has("carla"));
-console.log(has("nope"));
+console.log(get("test"));
+console.log(get("nope"));
+console.log(remove("test"));
+console.log(remove("words"));
+console.log(remove("carla"));
+console.log(remove("nope"));
