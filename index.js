@@ -293,6 +293,34 @@ function recursiveSearch(array, item) {
   return arr;
 }
 
+// Function to return array of key/value pairs in format [['key', 'value'], ['key', 'value']]
+function entries(array = newArr) {
+  let output = [];
+  // Loop through the array and search each bucket then add to an array
+  for (let i = 0; i < array.bucketSize; i++) {
+    if (array[i] && array[i].head !== null) {
+      let elements = recursiveCombine(array[i].head);
+      output.push(...elements);
+    }
+  }
+  return output;
+}
+
+// Another recursive function that returns key/value pairs as []
+function recursiveCombine(array) {
+  let arr = [];
+  // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
+  if (array.nextNode !== null) {
+    arr.push(
+      [`${array.key}`, `${array.value}`],
+      ...recursiveCombine(array.nextNode)
+    );
+    return arr;
+    // If this is the tail of the LinkedLIst then just return the keyvalue pair
+  } else arr.push([`${array.key}`, `${array.value}`]);
+  return arr;
+}
+
 let newArr = hashMap();
 set("test", "testValue");
 set("test", "newValue");
@@ -318,9 +346,10 @@ set("new", "one");
 set("okay", "new one");
 set("okay", "another");
 set("test", "herewego");
-set("carla", "okay");
+set("carla", "carlatest");
 set("words", "pleasework");
 // clear();
 console.log(newArr);
 console.log(keys());
 console.log(values());
+console.log(entries());
