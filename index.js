@@ -249,14 +249,17 @@ function length(array = newArr) {
   return counter;
 }
 
+// Empties all LinkedLists without removing the array or bucketsize
 function clear(array = newArr) {
   for (let i = 0; i < array.bucketSize; i++) {
     delete array[i];
   }
 }
 
+// Returns an array of all the keys in the Hash Table
 function keys(array = newArr) {
   let output = [];
+  // Loop through the array and search each bucket then add to an array
   for (let i = 0; i < array.bucketSize; i++) {
     if (array[i] && array[i].head !== null) {
       let elements = recursiveSearch(array[i].head, `key`);
@@ -266,11 +269,26 @@ function keys(array = newArr) {
   return output;
 }
 
+// Returns an array of all the values in the hash table
+function values(array = newArr) {
+  let output = [];
+  // Loop through the array and search each bucket then add to an array
+  for (let i = 0; i < array.bucketSize; i++) {
+    if (array[i] && array[i].head !== null) {
+      let elements = recursiveSearch(array[i].head, `value`);
+      output.push(...elements);
+    }
+  }
+  return output;
+}
+
 function recursiveSearch(array, item) {
   let arr = [];
+  // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
   if (array.nextNode !== null) {
-    arr.push(`${array[item]}`, `${recursiveSearch(array.nextNode, `key`)}`);
+    arr.push(`${array[item]}`, `${recursiveSearch(array.nextNode, item)}`);
     return arr;
+    // If this is the tail of the LinkedLIst then just return the item
   } else arr.push(`${array[item]}`);
   return arr;
 }
@@ -305,3 +323,4 @@ set("words", "pleasework");
 // clear();
 console.log(newArr);
 console.log(keys());
+console.log(values());
