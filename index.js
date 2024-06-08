@@ -219,6 +219,7 @@ function get(key, array = newArr) {
   } else return null;
 }
 
+// Tests if the key exists within the hash table
 function has(key, array = newArr) {
   const hashedKey = hash(key);
   if (array[hashedKey]) {
@@ -228,6 +229,7 @@ function has(key, array = newArr) {
   } else return false;
 }
 
+// Removes the key-value pair from the table
 function remove(key, array = newArr) {
   const hashedKey = hash(key);
   if (has(key)) {
@@ -236,6 +238,28 @@ function remove(key, array = newArr) {
     return true;
   } else return false;
 }
+
+// Returns the number of keys in the hash table
+function testLength(array = newArr) {
+  let counter = 0;
+  for (let i = 0; i < array.bucketSize; i++) {
+    if (array[i] && array[i].head !== null) {
+      counter += array[`${i}`].size();
+    }
+  }
+  return counter;
+}
+
+// function recursiveSearch(array) {
+//   let numberOfKeys = 0;
+//   if (array[`head`][`nextNode`] === null) {
+//     numberOfKeys++;
+//     return numberOfKeys;
+//   } else {
+//     numberOfKeys++;
+//     recursiveSearch(array[`head`][`nextNode`]);
+//   }
+// }
 
 let newArr = hashMap();
 set("test", "testValue");
@@ -247,8 +271,12 @@ console.log(get("carla"));
 console.log(get("words"));
 console.log(get("test"));
 console.log(get("nope"));
-console.log(remove("test"));
-console.log(remove("words"));
+set("anothertest", "newone");
+set("what", "ohno");
+set("okay", "leggo");
+// console.log(remove("test"));
+// console.log(remove("words"));
 // console.log(remove("carla"));
-console.log(remove("nope"));
+// console.log(remove("nope"));
 console.log(newArr);
+console.log(testLength());
