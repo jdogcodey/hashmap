@@ -164,7 +164,6 @@ class Node {
 // Factory function to make the Hashmap
 function hashMap() {
   return {
-    array: [],
     bucketSize: 16,
     loadFactor: 0.75,
   };
@@ -250,10 +249,30 @@ function length(array = newArr) {
   return counter;
 }
 
-function clear(array) {
+function clear(array = newArr) {
   for (let i = 0; i < array.bucketSize; i++) {
-    delete array[`array`];
+    delete array[i];
   }
+}
+
+function keys(array = newArr) {
+  let output = [];
+  for (let i = 0; i < array.bucketSize; i++) {
+    if (array[i] && array[i].head !== null) {
+      let elements = recursiveSearch(array[i].head, `key`);
+      output.push(...elements);
+    }
+  }
+  return output;
+}
+
+function recursiveSearch(array, item) {
+  let arr = [];
+  if (array.nextNode !== null) {
+    arr.push(`${array[item]}`, `${recursiveSearch(array.nextNode, `key`)}`);
+    return arr;
+  } else arr.push(`${array[item]}`);
+  return arr;
 }
 
 let newArr = hashMap();
@@ -269,10 +288,10 @@ console.log(get("nope"));
 set("anothertest", "newone");
 set("what", "ohno");
 set("okay", "leggo");
-// console.log(remove("test"));
-// console.log(remove("words"));
-// console.log(remove("carla"));
-// console.log(remove("nope"));
+console.log(remove("test"));
+console.log(remove("words"));
+console.log(remove("carla"));
+console.log(remove("nope"));
 console.log(newArr);
 console.log(length());
 clear(newArr);
@@ -281,4 +300,8 @@ set("new", "one");
 set("okay", "new one");
 set("okay", "another");
 set("test", "herewego");
+set("carla", "okay");
+set("words", "pleasework");
+// clear();
 console.log(newArr);
+console.log(keys());
