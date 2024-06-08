@@ -240,7 +240,7 @@ function remove(key, array = newArr) {
 }
 
 // Returns the number of keys in the hash table
-function testLength(array = newArr) {
+function length(array = newArr) {
   let counter = 0;
   for (let i = 0; i < array.bucketSize; i++) {
     if (array[i] && array[i].head !== null) {
@@ -250,16 +250,11 @@ function testLength(array = newArr) {
   return counter;
 }
 
-// function recursiveSearch(array) {
-//   let numberOfKeys = 0;
-//   if (array[`head`][`nextNode`] === null) {
-//     numberOfKeys++;
-//     return numberOfKeys;
-//   } else {
-//     numberOfKeys++;
-//     recursiveSearch(array[`head`][`nextNode`]);
-//   }
-// }
+function clear(array) {
+  for (let i = 0; i < array.bucketSize; i++) {
+    delete array[`array`];
+  }
+}
 
 let newArr = hashMap();
 set("test", "testValue");
@@ -279,4 +274,11 @@ set("okay", "leggo");
 // console.log(remove("carla"));
 // console.log(remove("nope"));
 console.log(newArr);
-console.log(testLength());
+console.log(length());
+clear(newArr);
+console.log(newArr);
+set("new", "one");
+set("okay", "new one");
+set("okay", "another");
+set("test", "herewego");
+console.log(newArr);
