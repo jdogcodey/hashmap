@@ -162,15 +162,15 @@ class Node {
 }
 
 // Factory function to make the Hashmap
-function hashMap() {
+function hashMap(bucketSize, loadFactor) {
   return {
-    bucketSize: 16,
-    loadFactor: 0.75,
+    bucketSize: bucketSize,
+    loadFactor: loadFactor,
   };
 }
 
 // Function to create a hash from a value
-function hash(key, array = newArr) {
+function hash(key, array) {
   let hashCode = 0;
   const primeNumber = 31;
   for (let i = 0; i < key.length; i++) {
@@ -181,10 +181,16 @@ function hash(key, array = newArr) {
 }
 
 //Function to assign a value to a key and add to the hashmap
-function set(key, value, array = newArr) {
-  const hashedKey = hash(key);
+function set(key, value, array) {
+  // When adding a new key value pair - first check whether load factor has been reached - if reached then double hash table and rehash everything
+  if (length(array) >= array.bucketSize * array.loadFactor) {
+    let newBucketSize = array.bucketSize * 2;
+    array = grow(array, newBucketSize);
+    set(key, value, array);
+  }
+  const hashedKey = hash(key, array);
   // If trying to add to bucket outside the range then throwing an error
-  if (hashedKey < 0 || hashedKey >= newArr.bucketSize) {
+  if (hashedKey < 0 || hashedKey >= array.bucketSize) {
     throw new Error("Trying to access index out of bound");
   }
   // If that bucket is already empty - create a Linked list and add the key/value pair
@@ -207,20 +213,32 @@ function set(key, value, array = newArr) {
   }
 }
 
+function grow(array, newBucketSize) {
+  const arrayCopy = array;
+  array.bucketSize = newBucketSize;
+  const keyArray = keys(array);
+  for (let i = 0; i < keyArray.length; i++) {
+    let key = keyArray[i];
+    let value = get(key, array);
+    set(key, value, newArray);
+  }
+  return newArray;
+}
+
 // Find the value pair of a key
-function get(key, array = newArr) {
-  const hashedKey = hash(key);
+function get(key, array) {
+  const hashedKey = hash(key, array);
   // If the key exists then find its value - otherwise return null
-  if (has(key)) {
-    const keyDirections = array[hashedKey].findKey(key);
+  if (has(key, array)) {
+    const keyDirections = array[hashedKey].findKey(key, array);
     const keyLocation = array[hashedKey].at(keyDirections);
     return keyLocation.value;
   } else return null;
 }
 
 // Tests if the key exists within the hash table
-function has(key, array = newArr) {
-  const hashedKey = hash(key);
+function has(key, array) {
+  const hashedKey = hash(key, array);
   if (array[hashedKey]) {
     if (array[hashedKey].containsKey(key)) {
       return true;
@@ -229,17 +247,17 @@ function has(key, array = newArr) {
 }
 
 // Removes the key-value pair from the table
-function remove(key, array = newArr) {
-  const hashedKey = hash(key);
-  if (has(key)) {
-    const keyPosition = array[hashedKey].findKey(key);
+function remove(key, array) {
+  const hashedKey = hash(key, array);
+  if (has(key, array)) {
+    const keyPosition = array[hashedKey].findKey(key, array);
     array[hashedKey].removeAt(keyPosition);
     return true;
   } else return false;
 }
 
 // Returns the number of keys in the hash table
-function length(array = newArr) {
+function length(array) {
   let counter = 0;
   for (let i = 0; i < array.bucketSize; i++) {
     if (array[i] && array[i].head !== null) {
@@ -250,14 +268,14 @@ function length(array = newArr) {
 }
 
 // Empties all LinkedLists without removing the array or bucketsize
-function clear(array = newArr) {
+function clear(array) {
   for (let i = 0; i < array.bucketSize; i++) {
     delete array[i];
   }
 }
 
 // Returns an array of all the keys in the Hash Table
-function keys(array = newArr) {
+function keys(array) {
   let output = [];
   // Loop through the array and search each bucket then add to an array
   for (let i = 0; i < array.bucketSize; i++) {
@@ -270,7 +288,7 @@ function keys(array = newArr) {
 }
 
 // Returns an array of all the values in the hash table
-function values(array = newArr) {
+function values(array) {
   let output = [];
   // Loop through the array and search each bucket then add to an array
   for (let i = 0; i < array.bucketSize; i++) {
@@ -286,15 +304,15 @@ function recursiveSearch(array, item) {
   let arr = [];
   // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
   if (array.nextNode !== null) {
-    arr.push(`${array[item]}`, `${recursiveSearch(array.nextNode, item)}`);
+    arr = [array[item], ...recursiveSearch(array.nextNode, item)];
     return arr;
     // If this is the tail of the LinkedLIst then just return the item
-  } else arr.push(`${array[item]}`);
+  } else arr = [array[item]];
   return arr;
 }
 
 // Function to return array of key/value pairs in format [['key', 'value'], ['key', 'value']]
-function entries(array = newArr) {
+function entries(array) {
   let output = [];
   // Loop through the array and search each bucket then add to an array
   for (let i = 0; i < array.bucketSize; i++) {
@@ -311,45 +329,29 @@ function recursiveCombine(array) {
   let arr = [];
   // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
   if (array.nextNode !== null) {
-    arr.push(
-      [`${array.key}`, `${array.value}`],
-      ...recursiveCombine(array.nextNode)
-    );
+    arr = [[array.key, array.value], ...recursiveCombine(array.nextNode)];
     return arr;
     // If this is the tail of the LinkedLIst then just return the keyvalue pair
-  } else arr.push([`${array.key}`, `${array.value}`]);
+  } else arr = [array.key, array.value];
   return arr;
 }
 
-let newArr = hashMap();
-set("test", "testValue");
-set("test", "newValue");
-set("words", "hmm");
-set("carla", "carla");
-console.log(newArr["9"]);
-console.log(get("carla"));
-console.log(get("words"));
-console.log(get("test"));
-console.log(get("nope"));
-set("anothertest", "newone");
-set("what", "ohno");
-set("okay", "leggo");
-console.log(remove("test"));
-console.log(remove("words"));
-console.log(remove("carla"));
-console.log(remove("nope"));
-console.log(newArr);
-console.log(length());
-clear(newArr);
-console.log(newArr);
-set("new", "one");
-set("okay", "new one");
-set("okay", "another");
-set("test", "herewego");
-set("carla", "carlatest");
-set("words", "pleasework");
-// clear();
-console.log(newArr);
-console.log(keys());
-console.log(values());
-console.log(entries());
+// Create a new hash map with a bucket size of 4 and a load factor of 0.75
+const testMap = hashMap(4, 0.75);
+
+// Add key-value pairs to the hash map to meet the load factor
+set("apple", "appleValue", testMap);
+set("banana", "bananaValue", testMap);
+set("date", "dateValue", testMap);
+
+// Check if the hash map needs to be resized
+console.log(length(testMap)); // Should output 3
+console.log(testMap.bucketSize); // Should output 4
+
+// Add one more key-value pair to trigger the resize
+set("grape", "grapeValue", testMap);
+
+// Check if the hash map has been resized
+console.log(length(testMap)); // Should output 4
+console.log(testMap.bucketSize); // Should output 8
+console.log(testMap); // Check the contents of the resized hash map
