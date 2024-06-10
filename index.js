@@ -316,27 +316,39 @@ function recursiveSearch(array, item) {
 // Function to return array of key/value pairs in format [['key', 'value'], ['key', 'value']]
 function entries(array) {
   let output = [];
-  // Loop through the array and search each bucket then add to an array
-  for (let i = 0; i < array.bucketSize; i++) {
-    if (array[i] && array[i].head !== null) {
-      let elements = recursiveCombine(array[i].head);
-      output.push(...elements);
-    }
+  const keyArray = keys(array);
+  // Loop through the keys and add an array with the value to the output []
+  for (let i = 0; i < keyArray.length; i++) {
+    output.push([keyArray[i], get(keyArray[i], array, array.bucketSize)]);
   }
   return output;
 }
 
-// Another recursive function that returns key/value pairs as []
-function recursiveCombine(array) {
-  let arr = [];
-  // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
-  if (array.nextNode !== null) {
-    arr = [[array.key, array.value], ...recursiveCombine(array.nextNode)];
-    return arr;
-    // If this is the tail of the LinkedLIst then just return the keyvalue pair
-  } else arr = [array.key, array.value];
-  return arr;
-}
+// Previous way of doing entries - didn't quite give the right pattern
+// // Function to return array of key/value pairs in format [['key', 'value'], ['key', 'value']]
+// function entries(array) {
+//   let output = [];
+//   // Loop through the array and search each bucket then add to an array
+//   for (let i = 0; i < array.bucketSize; i++) {
+//     if (array[i] && array[i].head !== null) {
+//       output.push(recursiveCombine(array[i].head));
+//     }
+//   }
+//   return output;
+// }
+
+// Function left over from different way of doing entries
+// // Another recursive function that returns key/value pairs as []
+// function recursiveCombine(array) {
+//   let arr = [];
+//   // If this isn't the tail of the Linkedlist then add this item(key/value) and rerun function on the next node
+//   if (array.nextNode !== null) {
+//     arr = [[array.key, array.value], recursiveCombine(array.nextNode)];
+//     return arr;
+//     // If this is the tail of the LinkedLIst then just return the keyvalue pair
+//   } else arr = [array.key, array.value];
+//   return arr;
+// }
 
 // Create the hash map with a bucket size of 4 and a load factor of 0.75
 const hashTable = hashMap(4, 0.75);
@@ -365,8 +377,22 @@ set("eight", "valueeight", hashTable);
 // console.log(has("nope", hashTable, hashTable.bucketSize));
 
 // Testing the remove function
-// console.log(remove("one", hashTable, hashTable.bucketSize));
-// console.log(has("one", hashTable, hashTable.bucketSize));
-// console.log(remove("nope", hashTable, hashTable.bucketSize));
-// console.log(remove("eight", hashTable, hashTable.bucketSize));
+console.log(remove("one", hashTable, hashTable.bucketSize));
+console.log(has("one", hashTable, hashTable.bucketSize));
+console.log(remove("nope", hashTable, hashTable.bucketSize));
+console.log(remove("eight", hashTable, hashTable.bucketSize));
+console.log(has("eight", hashTable, hashTable.bucketSize));
+
+// Testing after removing a few items
+console.log(length(hashTable));
+
+// Testing clear function
+// clear(hashTable);
+// console.log(hashTable);
 // console.log(has("eight", hashTable, hashTable.bucketSize));
+
+// Testing keys and values and entries functions
+// console.log(keys(hashTable));
+// console.log(values(hashTable));
+console.log(entries(hashTable));
+// console.log(hashTable);
