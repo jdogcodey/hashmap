@@ -251,7 +251,7 @@ function has(key, array, bucketSize) {
 // Removes the key-value pair from the table
 function remove(key, array, bucketSize) {
   const hashedKey = hash(key, bucketSize);
-  if (has(key, array)) {
+  if (has(key, array, array.bucketSize)) {
     const keyPosition = array[hashedKey].findKey(key, array);
     array[hashedKey].removeAt(keyPosition);
     return true;
@@ -337,3 +337,36 @@ function recursiveCombine(array) {
   } else arr = [array.key, array.value];
   return arr;
 }
+
+// Create the hash map with a bucket size of 4 and a load factor of 0.75
+const hashTable = hashMap(4, 0.75);
+
+// Adding values to cause rehashing a couple of times
+set("one", "valueone", hashTable);
+set("two", "valuetwo", hashTable);
+set("three", "valuethree", hashTable);
+set("four", "valuefour", hashTable);
+set("five", "valuefive", hashTable);
+set("six", "valuesix", hashTable);
+set("seven", "valueseven", hashTable);
+set("eight", "valueeight", hashTable);
+
+// console.log(length(hashTable)); // Should output 8 as there are 8 items
+// console.log(hashTable); // Should output all items with their value and a bucketSize of 16
+
+// Testing if the get function works
+// console.log(get("one", hashTable, hashTable.bucketSize));
+// console.log(get("three", hashTable, hashTable.bucketSize));
+// console.log(get("seven", hashTable, hashTable.bucketSize));
+
+// Testing if the has function works
+// console.log(has("one", hashTable, hashTable.bucketSize));
+// console.log(has("three", hashTable, hashTable.bucketSize));
+// console.log(has("nope", hashTable, hashTable.bucketSize));
+
+// Testing the remove function
+// console.log(remove("one", hashTable, hashTable.bucketSize));
+// console.log(has("one", hashTable, hashTable.bucketSize));
+// console.log(remove("nope", hashTable, hashTable.bucketSize));
+// console.log(remove("eight", hashTable, hashTable.bucketSize));
+// console.log(has("eight", hashTable, hashTable.bucketSize));
